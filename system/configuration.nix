@@ -6,12 +6,13 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelModules = [ "k10temp" ];
+  # Single user desktop allows root debug info
   boot.kernel.sysctl = {
     "kernel.perf_event_paranoid" = -1;
     "kernel.kptr_restrict" = 0;
   };
 
-  networking.hostName = "nixos";
+  networking.hostName = "desktop";
   networking.networkmanager.enable = true;
 
   time.timeZone = "America/Los_Angeles";
@@ -79,13 +80,15 @@
 
   services.greetd.enable = true;
   services.greetd.settings.default_session = {
-    command = "Hyprland";
+    command = "start-hyprland";
     user = "zach";
   };
 
   services.seatd.enable = true;
 
   services.printing.enable = true;
+
+  documentation.doc.enable = false;
 
   programs.zsh.enable = true;
 

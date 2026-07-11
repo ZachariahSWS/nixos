@@ -56,21 +56,21 @@
     "interval": 2,
     "return-type": "json",
     "format": "[{}]",
-    "exec": "~/.config/waybar/scripts/cpucombo.sh"
+    "exec": "~/.config/waybar/scripts/cpu-status"
   },
 
   "custom/nvidia": {
     "interval": 2,
     "return-type": "json",
     "format": "[{}]",
-    "exec": "~/.config/waybar/scripts/nvidia.sh"
+    "exec": "~/.config/waybar/scripts/nvidia-status"
   },
 
   "custom/memory": {
     "interval": 5,
     "return-type": "json",
     "format": "[mem {}]",
-    "exec": "~/.config/waybar/scripts/memory_swap.sh"
+    "exec": "~/.config/waybar/scripts/memory-status"
   },
 
   "disk": {

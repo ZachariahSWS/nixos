@@ -14,6 +14,9 @@ let
 in
 
 with pkgs; [
+  # Prettier rebuild
+  nh
+  
   # Browsers
   zen-browser.packages.${system}.default
 
@@ -34,7 +37,7 @@ with pkgs; [
   tectonic
 
   # Wayland
-  swww
+  awww
   waybar
 
   # Audio
@@ -53,11 +56,12 @@ with pkgs; [
   gh
   python312
   uv
-  nodejs_20
+  nodejs_24
   bubblewrap
   cacert
   pkg-config
   glibc.bin
+  perf
 
   # Rust
   rustNightly
@@ -68,13 +72,10 @@ with pkgs; [
   nasm
   gnumake
 
-  # Performance analysis
-  config.boot.kernelPackages.perf
-
   # CUDA
   cudaPackages.cuda_cudart
   cudaPackages.cuda_nvrtc
   cudaPackages.cuda_nvcc
   cudaPackages.cuda_cccl
-  cudaPackages.cuda_cudart.dev
+  cudaPackages.cuda_cudart
 ]

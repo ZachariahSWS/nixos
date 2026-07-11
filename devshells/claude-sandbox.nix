@@ -11,7 +11,7 @@ let
 
   runtimeInputs = with pkgs; [
     bubblewrap
-    nodejs_20
+    nodejs_24
     python312
     uv
     git
@@ -145,7 +145,7 @@ pkgs.writeShellApplication {
     args+=(--chdir "$WORKSPACE")
 
     exec ${pkgs.bubblewrap}/bin/bwrap "''${args[@]}" \
-      ${pkgs.nodejs_20}/bin/node \
+      ${pkgs.nodejs_24}/bin/node \
       "$WORKSPACE/node_modules/@anthropic-ai/claude-code/cli.js" \
       "$@"
   '';
