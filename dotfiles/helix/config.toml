@@ -1,0 +1,8 @@
+theme = "autumn_night_transparent"
+
+[editor.soft-wrap]
+enable = true
+max-wrap = 0
+max-indent-retain = 40
+wrap-indicator = ""
+

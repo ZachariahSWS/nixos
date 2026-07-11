@@ -1,0 +1,14 @@
+
+#!/usr/bin/env bash
+set -euo pipefail
+
+shader="$HOME/.config/hypr/shaders/eink.glsl"
+state="${XDG_STATE_HOME:-$HOME/.local/state}/hypr-eink"
+
+if [ "$(cat "$state" 2>/dev/null || echo off)" = "on" ]; then
+    hyprctl keyword decoration:screen_shader "[[EMPTY]]"
+    printf 'off\n' > "$state"
+else
+    hyprctl keyword decoration:screen_shader "$shader"
+    printf 'on\n' > "$state"
+fi

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+dir="$HOME/.config/waybar"
+state="${XDG_STATE_HOME:-$HOME/.local/state}/waybar-mode"
+mode="$(cat "$state" 2>/dev/null || echo compact)"
+
+case "$mode" in
+    compact) next=expanded ;;
+    *) next=compact ;;
+esac
+
+printf '%s\n' "$next" > "$state"
+
+ln -sf "$dir/config-$next.jsonc" "$dir/config"
+
+pkill -SIGUSR2 waybar

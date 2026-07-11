@@ -1,0 +1,14 @@
+inherits = "autumn_night"
+
+# Use terminal default background so terminal opacity shows through.
+"ui.background" = { bg = "default" }
+"ui.gutter" = { bg = "default" }
+"ui.linenr" = { bg = "default" }
+"ui.linenr.selected" = { bg = "default" }
+"ui.statusline" = { bg = "default" }
+"ui.statusline.inactive" = { bg = "default" }
+"ui.popup" = { bg = "default" }
+"ui.menu" = { bg = "default" }
+"ui.window" = { bg = "default" }
+"ui.help" = { bg = "default" }
+

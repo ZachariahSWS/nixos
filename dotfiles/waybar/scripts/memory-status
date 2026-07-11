@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Emits Waybar JSON:
+# - text: RAM percent (to match your current bar)
+# - tooltip: RAM used/total + Swap used/total
+
+# Read MemTotal, MemAvailable, SwapTotal, SwapFree from /proc/meminfo (kB)
+awk '
+  $1=="MemTotal:"     {mt=$2}
+  $1=="MemAvailable:" {ma=$2}
+  $1=="SwapTotal:"    {st=$2}
+  $1=="SwapFree:"     {sf=$2}
+  END {
+    if (mt<=0) { print "ERR"; exit 1 }
+
+    mu = mt - ma
+    mp = int((100.0 * mu / mt) + 0.5)
+
+    su = st - sf
+
+    # GiB (base-2)
+    mtg = mt / 1024.0 / 1024.0
+    mug = mu / 1024.0 / 1024.0
+    stg = st / 1024.0 / 1024.0
+    sug = su / 1024.0 / 1024.0
+
+    printf "%d %.1f %.1f %.1f %.1f\n", mp, mug, mtg, sug, stg
+  }
+' /proc/meminfo | {
+  read -r mp mug mtg sug stg
+
+  text="${mp}%"
+  tooltip=$(printf "RAM %s%%\nUsed %.1fG / %.1fG\nSwap Used %.1fG / %.1fG" "$mp" "$mug" "$mtg" "$sug" "$stg")
+
+  # Optional classing: warn if swap is in use
+  cls="ok"
+  awk -v u="$sug" 'BEGIN{exit !(u>0.01)}' && cls="warning"
+
+  # JSON escape minimal: backslash, quote, newline
+  esc() {
+    local s="$1"
+    s="${s//\\/\\\\}"
+    s="${s//\"/\\\"}"
+    s="${s//$'\n'/\\n}"
+    printf '%s' "$s"
+  }
+
+  printf '{"text":"%s","tooltip":"%s","class":"%s"}\n' "$(esc "$text")" "$(esc "$tooltip")" "$cls"
+}
+

@@ -1,0 +1,76 @@
+@define-color bg rgba(0, 0, 0, 0.60);
+@define-color fg #e8e4d9;
+@define-color dim rgba(232, 228, 217, 0.62);
+@define-color warn #d4a017;
+@define-color alert #c23d3d;
+
+* {
+    font-family: "AtkynsonMono Nerd Font Mono", monospace;
+    font-size: 20px;
+    font-weight: 700;
+    min-height: 0;
+    border: none;
+    border-radius: 0;
+}
+
+window#waybar {
+    background: @bg;
+    color: @fg;
+}
+
+#custom-cpucombo,
+#custom-nvidia,
+#custom-memory,
+#disk,
+#pulseaudio,
+#network,
+#clock,
+#mpris,
+#window {
+    padding: 0;
+    margin: 0 6px;
+}
+
+#workspaces button {
+    padding: 0;
+    margin: 0 3px;
+    color: @dim;
+    background: transparent;
+}
+
+#workspaces button.active {
+    color: @fg;
+}
+
+#workspaces button.visible {
+    color: @fg;
+}
+
+#workspaces button.empty {
+    color: @dim;
+}
+
+#workspaces button.urgent {
+    color: @alert;
+}
+
+#mpris {
+    color: @dim;
+}
+
+#window {
+    opacity: 0.7;
+}
+
+#custom-cpucombo.warning,
+#custom-nvidia.warning,
+#network.wifi,
+#network.disconnected {
+    color: @warn;
+}
+
+#custom-cpucombo.critical,
+#custom-nvidia.critical,
+#network.disabled {
+    color: @alert;
+}

@@ -1,0 +1,21 @@
+[window]
+opacity = 0.75
+
+[env]
+WINIT_UNIX_BACKEND = "wayland"
+
+[colors.primary]
+background = "0x000000"
+foreground = "0xeeeeee"
+
+[selection]
+save_to_clipboard = true
+
+[scrolling]
+history = 100000
+multiplier = 3
+
+[font]
+normal = { family = "AtkynsonMono Nerd Font", style = "Regular" }
+bold = { family = "AtkynsonMono Nerd Font", style = "Bold" }
+size = 12

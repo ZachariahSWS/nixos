@@ -1,0 +1,57 @@
+{
+  "layer": "top",
+  "position": "top",
+  "spacing": 0,
+
+  "modules-left": ["hyprland/workspaces"],
+  "modules-center": ["clock"],
+  "modules-right": ["network", "pulseaudio"],
+
+  "hyprland/workspaces": {
+    "sort-by-number": true,
+    "active-only": false,
+    "format": "[{icon}]",
+    "on-click": "hyprctl dispatch workspace {id}",
+    "format-icons": {
+      "1": "i",
+      "2": "ii",
+      "3": "iii",
+      "4": "iv",
+      "5": "v",
+      "6": "vi",
+      "7": "vii",
+      "8": "viii",
+      "9": "ix",
+      "10": "x",
+      "default": "{id}"
+    }
+  },
+
+  "clock": {
+    "interval": 30,
+    "format": "[{:%H:%M}]",
+    "format-alt": "[{:%a %Y-%m-%d %H:%M:%S}]",
+    "tooltip-format": "<tt>{:%A %B %d, %Y  %H:%M:%S}</tt>"
+  },
+
+  "network": {
+    "interval": 5,
+    "format-ethernet": "",
+    "format-wifi": "[wifi]",
+    "format-disconnected": "[net down]",
+    "tooltip-format-ethernet": "{ifname}\nIP {ipaddr}/{cidr}\nGW {gwaddr}\n{bandwidthDownBits} down\n{bandwidthUpBits} up",
+    "tooltip-format-wifi": "{ifname}\n{ssid}\nSignal {signalStrength}%\nIP {ipaddr}/{cidr}\nGW {gwaddr}\n{bandwidthDownBits} down\n{bandwidthUpBits} up"
+  },
+
+  "pulseaudio": {
+    "min-length": 7,
+    "format": "[vol {volume}%]",
+    "format-muted": "[vol muted]",
+    "scroll-step": 5,
+    "on-click": "pavucontrol",
+    "on-click-right": "pamixer -t"
+  },
+
+  "on-sigusr1": "toggle",
+  "on-sigusr2": "reload"
+}

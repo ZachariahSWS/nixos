@@ -1,0 +1,107 @@
+{
+  "layer": "top",
+  "position": "top",
+  "spacing": 0,
+
+  "modules-left": ["hyprland/workspaces", "mpris"],
+  "modules-center": ["clock"],
+  "modules-right": [
+    "custom/cpucombo",
+    "custom/nvidia",
+    "custom/memory",
+    "disk",
+    "pulseaudio",
+    "network"
+  ],
+
+  "hyprland/workspaces": {
+    "sort-by-number": true,
+    "active-only": false,
+    "format": "[{icon}]",
+    "on-click": "hyprctl dispatch workspace {id}",
+    "format-icons": {
+      "1": "i",
+      "2": "ii",
+      "3": "iii",
+      "4": "iv",
+      "5": "v",
+      "6": "vi",
+      "7": "vii",
+      "8": "viii",
+      "9": "ix",
+      "10": "x",
+      "default": "{id}"
+    }
+  },
+
+  "mpris": {
+    "player": "firefox",
+    "format": "[{title}]",
+    "format-paused": "[{title} paused]",
+    "format-stopped": "",
+    "max-length": 48,
+    "player-icons": {
+      "default": ""
+    }
+  },
+
+  "clock": {
+    "interval": 1,
+    "format": "[{:%a %Y-%m-%d %H:%M}]",
+    "format-alt": "[{:%Y-%m-%d %H:%M:%S}]",
+    "tooltip-format": "<tt>{:%A %B %d, %Y  %H:%M:%S}</tt>"
+  },
+
+  "custom/cpucombo": {
+    "interval": 2,
+    "return-type": "json",
+    "format": "[{}]",
+    "exec": "~/.config/waybar/scripts/cpucombo.sh"
+  },
+
+  "custom/nvidia": {
+    "interval": 2,
+    "return-type": "json",
+    "format": "[{}]",
+    "exec": "~/.config/waybar/scripts/nvidia.sh"
+  },
+
+  "custom/memory": {
+    "interval": 5,
+    "return-type": "json",
+    "format": "[mem {}]",
+    "exec": "~/.config/waybar/scripts/memory_swap.sh"
+  },
+
+  "disk": {
+    "interval": 30,
+    "path": "/",
+    "min-length": 11,
+    "align": 0,
+    "format": "[disk {free}]",
+    "tooltip": true,
+    "tooltip-format": "Disk /\nFree {free}\nUsed {used} / {total} ({percentage_used}%)"
+  },
+
+  "pulseaudio": {
+    "min-length": 7,
+    "format": "[vol {volume}%]",
+    "format-muted": "[vol muted]",
+    "scroll-step": 5,
+    "on-click": "pavucontrol",
+    "on-click-right": "pamixer -t"
+  },
+
+  "network": {
+    "interval": 2,
+    "min-length": 5,
+    "format-ethernet": "[eth]",
+    "format-wifi": "[wifi {signalStrength}%]",
+    "format-disconnected": "[net down]",
+    "tooltip-format-ethernet": "{ifname}\nIP {ipaddr}/{cidr}\nGW {gwaddr}\n{bandwidthDownBits} down\n{bandwidthUpBits} up",
+    "tooltip-format-wifi": "{ifname}\n{ssid}\nSignal {signalStrength}%\nIP {ipaddr}/{cidr}\nGW {gwaddr}\n{bandwidthDownBits} down\n{bandwidthUpBits} up"
+  },
+
+  "on-sigusr1": "toggle",
+  "on-sigusr2": "reload"
+}

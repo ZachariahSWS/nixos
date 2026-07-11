@@ -1,0 +1,92 @@
+{ pkgs, unstable, config, system, zen-browser }:
+
+let
+  rustNightly = unstable.rust-bin.selectLatestNightlyWith (toolchain:
+    toolchain.default.override {
+      extensions = [
+        "rust-src"
+        "rustfmt"
+        "clippy"
+        "rust-analyzer"
+      ];
+    }
+  );
+in
+
+with pkgs; [
+  # Neovim with plugins
+  (neovim.override {
+    configure = {
+      packages.myVimPackage = with vimPlugins; {
+        start = [
+          nvim-lspconfig
+        ];
+        opt = [ ];
+      };
+    };
+  })
+
+  # Browsers
+  zen-browser.packages.${system}.default
+
+  # Terminal & utilities
+  alacritty
+  btop
+  helix
+  ripgrep
+  fd
+  tree
+  glib
+  gsettings-desktop-schemas
+
+  # LaTeX
+  texlive.combined.scheme-medium
+  zathura
+  texlab
+  tectonic
+
+  # Wayland
+  swww
+  waybar
+
+  # Audio
+  pavucontrol
+  pamixer
+
+  # Brightness/media playing utilities
+  brightnessctl
+  playerctl
+
+  # bluetooth
+  bluetui
+
+  # General development
+  git
+  gh
+  python312
+  uv
+  nodejs_20
+  bubblewrap
+  cacert
+  pkg-config
+  glibc.bin
+
+  # Rust
+  rustNightly
+
+  # C/C++/assembly
+  gcc
+  binutils
+  nasm
+  gnumake
+
+  # Performance analysis
+  config.boot.kernelPackages.perf
+
+  # CUDA
+  cudaPackages.cuda_cudart
+  cudaPackages.cuda_nvrtc
+  cudaPackages.cuda_nvcc
+  cudaPackages.cuda_cccl
+  cudaPackages.cuda_cudart.dev
+]
