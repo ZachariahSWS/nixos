@@ -24,12 +24,12 @@ prev_input="/dev/null"
 [[ -r "$state_file" ]] && prev_input="$state_file"
 
 cleanup() {
-    rm -f "$next_state"
+	rm -f "$next_state"
 }
 trap cleanup EXIT
 
 mapfile -t usage_lines < <(
-    awk -v next_state="$next_state" '
+	awk -v next_state="$next_state" '
         function total_ticks() { return $2+$3+$4+$5+$6+$7+$8+$9 }
         function idle_ticks()  { return $5+$6 }
 
@@ -67,132 +67,132 @@ declare -a core_usage=()
 max_core=-1
 
 for line in "${usage_lines[@]}"; do
-    name="${line%% *}"
-    val="${line#* }"
+	name="${line%% *}"
+	val="${line#* }"
 
-    if [[ "$name" == "cpu" ]]; then
-        [[ "$val" != "-1.00" ]] && total_usage="$(printf "%02.0f" "$val")"
-        continue
-    fi
+	if [[ "$name" == "cpu" ]]; then
+		[[ "$val" != "-1.00" ]] && total_usage="$(printf "%02.0f" "$val")"
+		continue
+	fi
 
-    if [[ "$name" =~ ^cpu([0-9]+)$ ]]; then
-        idx="${BASH_REMATCH[1]}"
-        (( idx > max_core )) && max_core="$idx"
-        core_usage[idx]="$val"
-    fi
+	if [[ "$name" =~ ^cpu([0-9]+)$ ]]; then
+		idx="${BASH_REMATCH[1]}"
+		((idx > max_core)) && max_core="$idx"
+		core_usage[idx]="$val"
+	fi
 done
 
 read_avg_khz() {
-    local sum=0
-    local n=0
-    local f v
+	local sum=0
+	local n=0
+	local f v
 
-    for f in /sys/devices/system/cpu/cpufreq/policy*/scaling_cur_freq; do
-        [[ -r "$f" ]] || continue
-        read -r v < "$f"
-        [[ "$v" =~ ^[0-9]+$ ]] || continue
-        sum=$((sum + v))
-        n=$((n + 1))
-    done
+	for f in /sys/devices/system/cpu/cpufreq/policy*/scaling_cur_freq; do
+		[[ -r "$f" ]] || continue
+		read -r v <"$f"
+		[[ "$v" =~ ^[0-9]+$ ]] || continue
+		sum=$((sum + v))
+		n=$((n + 1))
+	done
 
-    (( n > 0 )) || return 1
-    printf "%d\n" "$((sum / n))"
+	((n > 0)) || return 1
+	printf "%d\n" "$((sum / n))"
 }
 
 ghz="?"
 if khz="$(read_avg_khz 2>/dev/null)"; then
-    ghz="$(printf "%.2f" "$(awk -v khz="$khz" 'BEGIN { print khz / 1000000.0 }')")"
+	ghz="$(printf "%.2f" "$(awk -v khz="$khz" 'BEGIN { print khz / 1000000.0 }')")"
 elif [[ -r /proc/cpuinfo ]]; then
-    ghz="$(
-        awk -F: '
+	ghz="$(
+		awk -F: '
             /cpu MHz/ { sum += $2; n++ }
             END {
                 if (n > 0) printf "%.2f", (sum / n) / 1000.0
                 else printf "?"
             }
         ' /proc/cpuinfo
-    )"
+	)"
 fi
 
 gov="?"
 p0="/sys/devices/system/cpu/cpufreq/policy0"
 if [[ -r "$p0/scaling_governor" ]]; then
-    read -r gov < "$p0/scaling_governor"
+	read -r gov <"$p0/scaling_governor"
 fi
 
 tempC="?"
 if [[ -r "$temp_path" ]]; then
-    read -r raw < "$temp_path"
-    if [[ "$raw" =~ ^[0-9]+$ ]]; then
-        tempC="$(( (raw + 500) / 1000 ))"
-    fi
+	read -r raw <"$temp_path"
+	if [[ "$raw" =~ ^[0-9]+$ ]]; then
+		tempC="$(((raw + 500) / 1000))"
+	fi
 fi
 
 load="$(awk '{print $1" "$2" "$3}' /proc/loadavg 2>/dev/null || echo "?")"
 
 tooltip_lines=(
-    "total: ${total_usage}%"
-    "freq:  ${ghz} ghz"
-    "temp:  ${tempC} °c"
-    "load:  ${load}"
-    "gov:   ${gov}"
-    ""
-    "per-core usage:"
+	"total: ${total_usage}%"
+	"freq:  ${ghz} ghz"
+	"temp:  ${tempC} °c"
+	"load:  ${load}"
+	"gov:   ${gov}"
+	""
+	"per-core usage:"
 )
 
-if (( max_core >= 0 )); then
-    row=""
-    count=0
+if ((max_core >= 0)); then
+	row=""
+	count=0
 
-    for ((i = 0; i <= max_core; i++)); do
-        v="${core_usage[i]:--1.00}"
+	for ((i = 0; i <= max_core; i++)); do
+		v="${core_usage[i]:--1.00}"
 
-        if [[ "$v" == "-1.00" || -z "$v" ]]; then
-            cell="$(printf "%2d: ??" "$i")"
-        else
-            cell="$(printf "%2d:%3.0f%%" "$i" "$v")"
-        fi
+		if [[ "$v" == "-1.00" || -z "$v" ]]; then
+			cell="$(printf "%2d: ??" "$i")"
+		else
+			cell="$(printf "%2d:%3.0f%%" "$i" "$v")"
+		fi
 
-        if [[ -z "$row" ]]; then
-            row="$cell"
-        else
-            row="${row} ${cell}"
-        fi
+		if [[ -z "$row" ]]; then
+			row="$cell"
+		else
+			row="${row} ${cell}"
+		fi
 
-        count=$((count + 1))
-        if (( count % per_row == 0 )); then
-            tooltip_lines+=("$row")
-            row=""
-        fi
-    done
+		count=$((count + 1))
+		if ((count % per_row == 0)); then
+			tooltip_lines+=("$row")
+			row=""
+		fi
+	done
 
-    [[ -n "$row" ]] && tooltip_lines+=("$row")
+	[[ -n "$row" ]] && tooltip_lines+=("$row")
 else
-    tooltip_lines+=("(no core stats yet; hover again in ~2s)")
+	tooltip_lines+=("(no core stats yet; hover again in ~2s)")
 fi
 
 tooltip="$(printf "%s\n" "${tooltip_lines[@]}")"
 
 cls="ok"
 if [[ "$tempC" != "?" ]]; then
-    if (( tempC >= crit )); then
-        cls="critical"
-    elif (( tempC >= warn )); then
-        cls="warning"
-    fi
+	if ((tempC >= crit)); then
+		cls="critical"
+	elif ((tempC >= warn)); then
+		cls="warning"
+	fi
 fi
 
 text="cpu ${total_usage}% ${tempC}c ${ghz}ghz"
 
 esc() {
-    local s="$1"
-    s="${s//\\/\\\\}"
-    s="${s//\"/\\\"}"
-    s="${s//$'\n'/\\n}"
-    printf '%s' "$s"
+	local s="$1"
+	s="${s//\\/\\\\}"
+	s="${s//\"/\\\"}"
+	s="${s//$'\n'/\\n}"
+	printf '%s' "$s"
 }
 
 printf '{"text":"%s","tooltip":"%s","class":"%s"}\n' \
-    "$(esc "$text")" \
-    "$(esc "$tooltip")" \
-    "$cls"
+	"$(esc "$text")" \
+	"$(esc "$tooltip")" \
+	"$cls"

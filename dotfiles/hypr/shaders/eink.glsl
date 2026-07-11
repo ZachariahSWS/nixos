@@ -25,36 +25,13 @@ void main() {
 
     float gray = dot(pixColor.rgb, vec3(0.299, 0.587, 0.114));
 
-    /*
-       Softer e-ink response.
-
-       The original shader did:
-           gray = pow(gray, 1.2);
-           gray = smoothstep(0.08, 0.92, gray);
-
-       That crushes dark tones and compresses the ends fairly hard. This version
-       keeps shadows more open while still reducing the screen to a paper/ink range.
-    */
     gray = pow(gray, 1.08);
 
-    /*
-       Gentle contrast around mid-gray. Values near 0 and 1 are affected much less
-       than with smoothstep, so dark UI regions do not collapse into flat ink.
-    */
     float contrast = 1.10;
     gray = (gray - 0.5) * contrast + 0.5;
 
-    /*
-       Lift the very darkest tones slightly. This is the main anti-crushing term.
-       It preserves separation between black UI elements, dark terminal backgrounds,
-       dark wallpaper regions, and actual text.
-    */
     gray = mix(gray, sqrt(max(gray, 0.0)), 0.18);
 
-    /*
-       Small ordered dither, mostly visible in mid/high tones. This keeps gradients
-       from looking too digitally smooth without adding simulated paper texture.
-    */
     float bayerValue = getBayer(gl_FragCoord.xy);
     float ditherMask = smoothstep(0.18, 0.92, gray);
     gray += (bayerValue - 0.5) * 0.010 * ditherMask;

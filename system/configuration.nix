@@ -1,4 +1,4 @@
-{ config, lib, pkgs, unstable, system, zen-browser, ... }:
+{ config, pkgs, unstable, system, zen-browser, ... }:
 
 {
   imports = [ ./hardware-configuration.nix ];
@@ -15,10 +15,6 @@
   networking.networkmanager.enable = true;
 
   time.timeZone = "America/Los_Angeles";
-
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   nixpkgs.config.allowUnfree = true;
 
@@ -95,7 +91,7 @@
 
   users.users.zach = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "video" "networkmanager"];
+    extraGroups = [ "wheel" "video" "networkmanager" ];
     shell = pkgs.zsh;
   };
 

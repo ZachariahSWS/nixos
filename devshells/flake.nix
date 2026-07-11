@@ -24,7 +24,7 @@
       {
         name,
         claude ? false,
-        extraPackages ? pkgs: [ ],
+        extraPackages ? _: [ ],
         extraShellHook ? "",
       }:
 

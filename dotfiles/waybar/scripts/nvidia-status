@@ -15,47 +15,47 @@ warn="${WAYBAR_NVIDIA_TEMP_WARN:-72}"
 crit="${WAYBAR_NVIDIA_TEMP_CRIT:-80}"
 
 esc() {
-    local s="$1"
-    s="${s//\\/\\\\}"
-    s="${s//\"/\\\"}"
-    s="${s//$'\n'/\\n}"
-    printf '%s' "$s"
+	local s="$1"
+	s="${s//\\/\\\\}"
+	s="${s//\"/\\\"}"
+	s="${s//$'\n'/\\n}"
+	printf '%s' "$s"
 }
 
 emit() {
-    local text="$1"
-    local tooltip="$2"
-    local cls="$3"
+	local text="$1"
+	local tooltip="$2"
+	local cls="$3"
 
-    printf '{"text":"%s","tooltip":"%s","class":"%s"}\n' \
-        "$(esc "$text")" \
-        "$(esc "$tooltip")" \
-        "$(esc "$cls")"
+	printf '{"text":"%s","tooltip":"%s","class":"%s"}\n' \
+		"$(esc "$text")" \
+		"$(esc "$tooltip")" \
+		"$(esc "$cls")"
 }
 
 if ! command -v nvidia-smi >/dev/null 2>&1; then
-    emit "n/a" "nvidia-smi not found" "disabled"
-    exit 0
+	emit "n/a" "nvidia-smi not found" "disabled"
+	exit 0
 fi
 
 raw="$(
-    nvidia-smi -i "$gpu" \
-        --query-gpu=name,power.draw,power.limit,temperature.gpu,utilization.gpu,memory.used,memory.total,pstate,clocks.gr,clocks.mem \
-        --format=csv,noheader,nounits 2>/dev/null || true
+	nvidia-smi -i "$gpu" \
+		--query-gpu=name,power.draw,power.limit,temperature.gpu,utilization.gpu,memory.used,memory.total,pstate,clocks.gr,clocks.mem \
+		--format=csv,noheader,nounits 2>/dev/null || true
 )"
 
 if [[ -z "$raw" ]]; then
-    emit "n/a" "nvidia-smi query failed" "disabled"
-    exit 0
+	emit "n/a" "nvidia-smi query failed" "disabled"
+	exit 0
 fi
 
 IFS=',' read -r name pwr lim temp util mem_used mem_total pstate grclk memclk <<<"$raw"
 
 trim() {
-    local s="$1"
-    s="${s#"${s%%[![:space:]]*}"}"
-    s="${s%"${s##*[![:space:]]}"}"
-    printf '%s' "$s"
+	local s="$1"
+	s="${s#"${s%%[![:space:]]*}"}"
+	s="${s%"${s##*[![:space:]]}"}"
+	printf '%s' "$s"
 }
 
 name="$(trim "$name")"
@@ -71,30 +71,30 @@ memclk="$(trim "$memclk")"
 
 cls="ok"
 if [[ "$temp" =~ ^[0-9]+$ ]]; then
-    if (( temp >= crit )); then
-        cls="critical"
-    elif (( temp >= warn )); then
-        cls="warning"
-    fi
+	if ((temp >= crit)); then
+		cls="critical"
+	elif ((temp >= warn)); then
+		cls="warning"
+	fi
 fi
 
 if [[ "$util" =~ ^[0-9]+$ ]]; then
-    util_text="$(printf "%02d" "$util")"
+	util_text="$(printf "%02d" "$util")"
 else
-    util_text="$util"
+	util_text="$util"
 fi
 
 text="gpu ${util_text}% ${temp}c ${mem_used}m"
 
 tooltip="$(
-    printf 'gpu %s\n' "$gpu"
-    printf '%s\n' "$name"
-    printf 'power: %sw / %sw\n' "$pwr" "$lim"
-    printf 'temp:  %s c\n' "$temp"
-    printf 'util:  %s%%\n' "$util_text"
-    printf 'mem:   %s mib / %s mib\n' "$mem_used" "$mem_total"
-    printf 'state: %s\n' "$pstate"
-    printf 'clock: gr %s mhz, mem %s mhz\n' "$grclk" "$memclk"
+	printf 'gpu %s\n' "$gpu"
+	printf '%s\n' "$name"
+	printf 'power: %sw / %sw\n' "$pwr" "$lim"
+	printf 'temp:  %s c\n' "$temp"
+	printf 'util:  %s%%\n' "$util_text"
+	printf 'mem:   %s mib / %s mib\n' "$mem_used" "$mem_total"
+	printf 'state: %s\n' "$pstate"
+	printf 'clock: gr %s mhz, mem %s mhz\n' "$grclk" "$memclk"
 )"
 
 emit "$text" "$tooltip" "$cls"

@@ -1,8 +1,25 @@
 theme = "autumn_night_transparent"
 
+[editor]
+completion-trigger-len = 4
+completion-timeout = 500
+preview-completion-insert = false
+end-of-line-diagnostics = "hint"
+
+[editor.lsp]
+display-inlay-hints = true
+display-progress-messages = true
+auto-signature-help = true
+
+[editor.inline-diagnostics]
+cursor-line = "warning"
+other-lines = "error"
+
 [editor.soft-wrap]
 enable = true
 max-wrap = 0
 max-indent-retain = 40
 wrap-indicator = ""
 
+[keys.insert]
+C-s = ":w"

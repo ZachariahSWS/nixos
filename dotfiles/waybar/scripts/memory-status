@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Emits Waybar JSON:
-# - text: RAM percent (to match your current bar)
+# - text: RAM percent
 # - tooltip: RAM used/total + Swap used/total
 
 # Read MemTotal, MemAvailable, SwapTotal, SwapFree from /proc/meminfo (kB)
@@ -28,24 +28,21 @@ awk '
     printf "%d %.1f %.1f %.1f %.1f\n", mp, mug, mtg, sug, stg
   }
 ' /proc/meminfo | {
-  read -r mp mug mtg sug stg
+	read -r mp mug mtg sug stg
 
-  text="${mp}%"
-  tooltip=$(printf "RAM %s%%\nUsed %.1fG / %.1fG\nSwap Used %.1fG / %.1fG" "$mp" "$mug" "$mtg" "$sug" "$stg")
+	text="${mp}%"
+	tooltip=$(printf "RAM %s%%\nUsed %.1fG / %.1fG\nSwap Used %.1fG / %.1fG" "$mp" "$mug" "$mtg" "$sug" "$stg")
 
-  # Optional classing: warn if swap is in use
-  cls="ok"
-  awk -v u="$sug" 'BEGIN{exit !(u>0.01)}' && cls="warning"
+	cls="ok"
+	awk -v u="$sug" 'BEGIN{exit !(u>0.01)}' && cls="warning"
 
-  # JSON escape minimal: backslash, quote, newline
-  esc() {
-    local s="$1"
-    s="${s//\\/\\\\}"
-    s="${s//\"/\\\"}"
-    s="${s//$'\n'/\\n}"
-    printf '%s' "$s"
-  }
+	esc() {
+		local s="$1"
+		s="${s//\\/\\\\}"
+		s="${s//\"/\\\"}"
+		s="${s//$'\n'/\\n}"
+		printf '%s' "$s"
+	}
 
-  printf '{"text":"%s","tooltip":"%s","class":"%s"}\n' "$(esc "$text")" "$(esc "$tooltip")" "$cls"
+	printf '{"text":"%s","tooltip":"%s","class":"%s"}\n' "$(esc "$text")" "$(esc "$tooltip")" "$cls"
 }
-

@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo="$(
+    cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
+    pwd -P
+)"
+repo="${XDG_CONFIG_REPO:-$repo}"
+
+config_home="${XDG_CONFIG_HOME:-$HOME/.config}"
+bin_home="${XDG_BIN_HOME:-$HOME/.local/bin}"
+
+link_file() {
+    local source="$1"
+    local target="$2"
+
+    if [[ ! -e "$source" ]]; then
+        printf 'error: source does not exist: %s\n' "$source" >&2
+        return 1
+    fi
+
+    mkdir -p -- "$(dirname -- "$target")"
+    ln -sfn -- "$source" "$target"
+}
+
+dotfile_links=(
+    "alacritty/alacritty.toml:alacritty/alacritty.toml"
+    "bluetuith/bluetuith.conf:bluetuith/bluetuith.conf"
+    "gh/config.yml:gh/config.yml"
+    "helix/config.toml:helix/config.toml"
+    "helix/themes/autumn_night_transparent.toml:helix/themes/autumn_night_transparent.toml"
+    "helix/languages.toml:helix/languages.toml"
+    "hypr/hyprland.conf:hypr/hyprland.conf"
+    "hypr/shaders/eink.glsl:hypr/shaders/eink.glsl"
+    "mimeapps.list:mimeapps.list"
+    "waybar/compact.jsonc:waybar/compact.jsonc"
+    "waybar/expanded.jsonc:waybar/expanded.jsonc"
+    "waybar/style.css:waybar/style.css"
+    "waybar/scripts/cpu-status:waybar/scripts/cpu-status"
+    "waybar/scripts/memory-status:waybar/scripts/memory-status"
+    "waybar/scripts/nvidia-status:waybar/scripts/nvidia-status"
+    "zathura/zathurarc.conf:zathura/zathurarc.conf"
+)
+
+for mapping in "${dotfile_links[@]}"; do
+    source="${mapping%%:*}"
+    target="${mapping#*:}"
+
+    link_file \
+        "$repo/dotfiles/$source" \
+        "$config_home/$target"
+done
+
+commands=(
+    toggle-eink
+    toggle-theme
+    toggle-waybar
+)
+
+for command in "${commands[@]}"; do
+    link_file \
+        "$repo/bin/$command" \
+        "$bin_home/$command"
+done
+
+# Default to the expanded Waybar configuration without overwriting an
+# existing regular file or an already selected configuration symlink.
+waybar_config="$config_home/waybar/config"
+
+if [[ ! -e "$waybar_config" && ! -L "$waybar_config" ]]; then
+    link_file \
+        "$config_home/waybar/expanded.jsonc" \
+        "$waybar_config"
+fi

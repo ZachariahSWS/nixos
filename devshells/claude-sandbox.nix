@@ -3,7 +3,7 @@
 {
   name,
   packageName ? "claude-sandbox",
-  extraRuntimeInputs ? pkgs: [ ],
+  extraRuntimeInputs ? _: [ ],
 }:
 
 let

@@ -7,9 +7,9 @@ light_wallpaper="$HOME/walls/mt_washington.jpg"
 current_scheme="$(gsettings get org.gnome.desktop.interface color-scheme)"
 
 if [[ "$current_scheme" == "'prefer-dark'" ]]; then
-    gsettings set org.gnome.desktop.interface color-scheme prefer-light
-    swww img "$light_wallpaper" --transition-type none
+	gsettings set org.gnome.desktop.interface color-scheme prefer-light
+	swww img "$light_wallpaper" --transition-type none
 else
-    gsettings set org.gnome.desktop.interface color-scheme prefer-dark
-    swww img "$dark_wallpaper" --transition-type none
+	gsettings set org.gnome.desktop.interface color-scheme prefer-dark
+	swww img "$dark_wallpaper" --transition-type none
 fi

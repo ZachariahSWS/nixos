@@ -5,3 +5,9 @@ result-*
 *.swo
 *~
 .DS_Store
+.claude-home/
+.cuda-shim/
+.uv-cache/
+.uv-python/
+.venv/
+node_modules/

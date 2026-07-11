@@ -14,18 +14,6 @@ let
 in
 
 with pkgs; [
-  # Neovim with plugins
-  (neovim.override {
-    configure = {
-      packages.myVimPackage = with vimPlugins; {
-        start = [
-          nvim-lspconfig
-        ];
-        opt = [ ];
-      };
-    };
-  })
-
   # Browsers
   zen-browser.packages.${system}.default
 

@@ -1,0 +1,86 @@
+[language-server.texlab]
+command = "texlab"
+
+[language-server.texlab.config.texlab]
+auxDirectory = "build"
+
+[language-server.texlab.config.texlab.build]
+executable = "tectonic"
+args = [
+  "-X",
+  "compile",
+  "--synctex",
+  "--keep-logs",
+  "--keep-intermediates",
+  "--outdir",
+  "build",
+  "%f",
+]
+onSave = true
+forwardSearchAfter = true
+
+[language-server.texlab.config.texlab.forwardSearch]
+executable = "zathura"
+args = [
+  "--synctex-forward",
+  "%l:1:%f",
+  "%p",
+]
+
+[language-server.texlab.config.texlab.chktex]
+onEdit = false
+onOpenAndSave = false
+
+[[language]]
+name = "latex"
+language-servers = ["texlab"]
+
+[[language]]
+name = "bibtex"
+language-servers = ["texlab"]
+
+
+[language-server.rust-analyzer]
+command = "rust-analyzer"
+
+[language-server.rust-analyzer.config.check]
+command = "clippy"
+allTargets = true
+
+[language-server.rust-analyzer.config.completion.termSearch]
+enable = true
+fuel = 1000
+
+[language-server.rust-analyzer.config.inlayHints.bindingModeHints]
+enable = false
+
+[language-server.rust-analyzer.config.inlayHints.closureCaptureHints]
+enable = false
+
+[language-server.rust-analyzer.config.inlayHints.closureReturnTypeHints]
+enable = "with_block"
+
+[language-server.rust-analyzer.config.inlayHints.expressionAdjustmentHints]
+enable = "never"
+
+[language-server.rust-analyzer.config.inlayHints.lifetimeElisionHints]
+enable = "skip_trivial"
+
+[language-server.rust-analyzer.config.inlayHints.parameterHints]
+enable = true
+
+[language-server.rust-analyzer.config.inlayHints.typeHints]
+enable = true
+
+[[language]]
+name = "rust"
+language-servers = ["rust-analyzer"]
+auto-format = true
+rulers = [100]
+text-width = 100
+
+[language.auto-pairs]
+'(' = ')'
+'{' = '}'
+'[' = ']'
+'"' = '"'
